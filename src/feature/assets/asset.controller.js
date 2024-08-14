@@ -1,5 +1,5 @@
 
-import AssetRepo from "./asset.repository.js"
+import AssetRepo from "./asset.repository.js";
 
 export default class AssetController {
     constructor() {
@@ -8,9 +8,9 @@ export default class AssetController {
 
     async createAssetDraft(req, res, next) {
         try {
-            const { name, description, status } = req.body
+            const { name, description, status,price } = req.body
             const image = req.file.filename;
-            const asset = await this.assetRepo.createAssetDraft(name, description, image, status, req.userid)
+            const asset = await this.assetRepo.createAssetDraft(name, description, image, status,price, req.userid)
             console.log(asset)
             res.status(200).send({
                 "message": "Asset created successfully",
@@ -60,22 +60,14 @@ export default class AssetController {
             next(error)
         }
     }
-}
 
-// Endpoint: `POST /assets`
-// - Request:
-// ```json
-// {
-// "name": "string",
-// "description": "string",
-// "image": "string",
-// "status": "draft" // or "published"
-// }
-// ```
-// - Response:
-// ```json
-// {
-// "message": "Asset created successfully",
-// "assetId": "string"
-// }
-// ``
+    async getUserAsset(req,res,next){
+        try {
+            const userid = req.params.id
+            const assets = await this.assetRepo.getUserAsset(userid);
+            res.status(200).send(assets)
+        } catch (error) {
+            next(error)
+        }
+    }
+}

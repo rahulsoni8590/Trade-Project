@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 
-const url = "mongodb://localhost:27017/trade"
+const dbName = "trade";
+
+const url = `mongodb://localhost:27017/${dbName}`
 
 export default async function getClient(){
     try{
@@ -12,4 +14,3 @@ export default async function getClient(){
     }
 }
 
-//dot env config

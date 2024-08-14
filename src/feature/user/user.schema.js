@@ -9,6 +9,12 @@ const userSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId, 
             ref:"asset" 
         }
+    ],
+    proposals:[
+        {
+            type: mongoose.Schema.Types.ObjectId, 
+            ref:"proposal" 
+        }
     ]
 })
 

@@ -5,11 +5,12 @@ import { CustomError } from "../../middleware/error.js";
 export default class AssetRepo {
 
     // Main function to create an asset draft
-    async createAssetDraft(name, description, image, status, userid) {
+    async createAssetDraft(name, description, image, status,price, userid) {
+        console.log(price)
         try {
-            const newAsset = await this.createAsset(name, description, image, status);
+            const newAsset = await this.createAsset(name, description, image, status,price);
             const user = await this.updateUserWithAsset(userid, newAsset._id);
-            const asset = await this.updateAssetDetails(newAsset._id, user._id);
+            const asset = await this.updateAssetDetails(newAsset._id, user._id,price);
             return asset;
         } catch (error) {
             console.error(error);
@@ -18,12 +19,13 @@ export default class AssetRepo {
     }
 
     // function to create a new asset
-    async createAsset(name, description, image, status) {
+    async createAsset(name, description, image, status, price) {
         const newAsset = new assetModel({
             name,
             description,
             image,
-            status
+            status,
+            price
         });
         return await newAsset.save();
     }
@@ -41,7 +43,7 @@ export default class AssetRepo {
 
 
     // function to update the asset details
-    async updateAssetDetails(assetId, userId) {
+    async updateAssetDetails(assetId, userId,price) {
         const asset = await assetModel.findById(assetId);
         if (!asset) {
             throw new Error('Asset not found');
@@ -51,7 +53,7 @@ export default class AssetRepo {
         asset.tradingJourney[0] = {
             holder: userId,
             date: new Date(),
-            price: 100
+            price
         };
         await asset.save();
         return asset;
@@ -80,16 +82,16 @@ export default class AssetRepo {
         return asset
     }
 
-    async updateAsset(assetid, list = true, userid=null) {
+    async updateAsset(assetid, list = true, userid = null) {
         const asset = await assetModel.findById(assetid);
         if (list) {
             asset.status = "published";
             asset.isListed = true;
             await asset.save();
             await this.listOnMarket(assetid)
-        }else{
-            const user = await this.checkUserAssets(assetid,userid);
-            asset.status = asset.status==="draft"?"published":"draft"
+        } else {
+            const user = await this.checkUserAssets(assetid, userid);
+            asset.status = asset.status === "draft" ? "published" : "draft"
             await asset.save();
         }
         return asset
@@ -107,27 +109,17 @@ export default class AssetRepo {
         }
         return asset
     }
+
+    async getUserAsset(userid) {
+        try {
+            const userAssets = await assetModel.find({
+                currentHolder:userid}).select("-status");
+            return userAssets
+        } catch (error) {
+            console.log(error)
+            throw new CustomError(400, "Failed to get the user Assets")
+        }
+
+    }
 }
 
-
-
-// async createAssetDraft(name, description, image, status, userid) {
-//     try {
-//         const newAsset = await new assetModel(name, description, image, status).save();
-//         const user = await this.finduser(userid);
-//         user.assets.push(new ObjectId(newAsset._id));
-//         user.save()
-//         console.log(user)
-//         const asset = await this.findAsset(newAsset._id);
-//         asset.creator = new ObjectId(user._id);
-//         asset.currentHolder = new ObjectId(user._id);
-//         asset.tradingJourney[0] = {
-//             holder: new ObjectId(user._id),
-//             date: new Date(Date.now()),
-//             price: 100
-//         }
-//         asset.save()
-//         return asset
-//     } catch (error) {
-//         throw new Error(error)
-//     }

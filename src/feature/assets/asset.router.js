@@ -6,7 +6,7 @@ const assetRouter = express.Router();
 const assetController = new AssetController()
 
 
-// mark lish as true and also publish
+// mark list as true and also publish
 assetRouter.put("/:id/publish",(req,res,next)=>{ // add a new asset
     assetController.listAssetOnMarketplace(req,res,next)
 })
@@ -16,7 +16,7 @@ assetRouter.get("/:id", (req,res,next)=>{
     assetController.getAssetDetail(req,res,next)
 }) 
 
-// only currentholder can update the asset detail
+// Update the asset detail
 assetRouter.post("/:id", (req,res,next)=>{ 
     assetController.updateAsset(req,res,next)
 }) 
@@ -26,7 +26,9 @@ assetRouter.post("/", fileUpload.single("image") ,(req,res,next)=>{
     assetController.createAssetDraft(req,res,next)
 })
 
-
-// assetRouter.get("/users/:id/assets", getuserasset) // user can fetch its all assets
+// user can fetch its all assets
+assetRouter.get("/:id/assets", (req,res,next)=>{ 
+    assetController.getUserAsset(req,res,next) 
+})
 
 export default assetRouter;

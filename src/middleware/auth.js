@@ -12,6 +12,7 @@ const jwtAuth = function(req,res,next){
             req.username = payload.username;
             next()
         }catch(err){
+            console.log(err)
             next(new CustomError(404, "Token Error"))
         }   
     }

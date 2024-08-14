@@ -15,6 +15,7 @@ const assetSchema = new mongoose.Schema({
     lastTradingPrice:{ type:  Number, default:0 },
     numberOfTransfers:{ type:  Number, default:0 } ,
     isListed: { type: Boolean, default:false },
+    price:{type:Number},
     tradingJourney: [
         {
             holder: { type:mongoose.Schema.Types.ObjectId, ref:"user"},
@@ -25,11 +26,6 @@ const assetSchema = new mongoose.Schema({
     proposals: { type: Number, default:0 }
 })
 
-const assetModel = mongoose.model("assets", assetSchema)
+const assetModel = mongoose.model("asset", assetSchema)
 
 export default assetModel
-
-// "requestId": "string",
-// "assetId": "string",
-// "proposedPrice": "number",
-// "status": "pending" // or "accepted", "denied"
